@@ -1,12 +1,19 @@
 #pragma ide diagnostic ignored "EndlessLoop"
 
 #include "iostream"
-
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 //#include <opencv2/core/utility.hpp>
 using namespace cv;
 using namespace std;
+
+void event(int event, int x, int y) {
+    if (event == EVENT_LBUTTONUP) {
+        cout << "Mouse click" << endl;
+        cout << x << " " << y << endl;
+
+    }
+}
 
 int main() {
 
@@ -33,7 +40,7 @@ int main() {
     circle(img, Point(100, 100), 155, Scalar(0, 69, 255));
     imshow("Image", img);
 
-
+    setMouseCallback("Image", reinterpret_cast<MouseCallback>(event));
     cv::waitKey(0);
     imshow("Image", img_canny);
     cv::waitKey(0);
