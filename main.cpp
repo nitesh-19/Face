@@ -13,6 +13,7 @@ Point2f captured_coordinates[4] = {{0, 0},
 int clicks = 0;
 Mat img;
 Mat result_image;
+int flag = 0;
 
 float get_distance(Point2f (&p1), Point2f (&p2)) {
     float x = p2.x - p1.x;
@@ -28,7 +29,9 @@ static void event(int event, int x, int y) {
         cout << captured_coordinates[clicks] << endl;
         clicks++;
     } else if (clicks > 3) {
-        destroyWindow("Image");
+        destroyAllWindows();
+
+        flag = 1;
     }
 }
 
@@ -41,6 +44,8 @@ void trackbar_slider(int state) {
     Mat scaled_image;
     resize(img, result_image, Size(), scaleFactor, scaleFactor, INTER_LINEAR);
     imshow("Result", result_image);
+    waitKey(2);
+
 }
 
 
@@ -48,19 +53,26 @@ int main() {
     int screen_width = (int) GetSystemMetrics(SM_CXSCREEN);
     int screen_height = (int) GetSystemMetrics(SM_CYSCREEN);
 
-    string path = "C:\\Users\\Nitesh\\Documents\\(B)CommonFiles\\Coding_Workspace\\Face\\grill.jpg";
+    string path = R"(C:\Users\Nitesh\Documents\(B)CommonFiles\Coding_Workspace\Face\grill.jpg)";
     img = imread(path);
     Mat matrix;
+    namedWindow("Image");
 
     float h = img.size[0];
     float w = img.size[1];
     int a = 100;
 
 
+//    while (flag != 1) {
     imshow("Image", img);
+
     setMouseCallback("Image", reinterpret_cast<MouseCallback>(event));
     cv::waitKey(0);
+//    }
+    destroyAllWindows();
 
+
+//    if (flag == 1) {
     float avg_width = (get_distance((captured_coordinates)[0], (captured_coordinates)[1]) +
                        get_distance((captured_coordinates)[2], (captured_coordinates)[3])) / 2;
     float avg_height = (get_distance((captured_coordinates)[0], (captured_coordinates)[2]) +
@@ -73,12 +85,16 @@ int main() {
     namedWindow("Result");
     matrix = getPerspectiveTransform(captured_coordinates, destination);
     warpPerspective(img, result_image, matrix, Point(avg_width, avg_height));
-//    img = result_image;
     imshow("Result", result_image);
     createTrackbar("ScaleX", "Result", &a, 500, reinterpret_cast<TrackbarCallback>(trackbar_slider));
+//    img = result_image;
+//    imshow("Result", result_image);
 
 //    createTrackbar("Scale Y", "Image", p, 100, reinterpret_cast<TrackbarCallback>(trackbar_slider));
-    waitKey(0);
+//    }
+    waitKey(10);
+
+
     return 0;
 
 }
